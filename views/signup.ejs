@@ -15,15 +15,15 @@
       <% }) %>
     <% } %>
     
-    <form action="/signup" method="post">
+    <form action="/auth/create" method="post">
       <label for="name">
         Full Name:
-        <input type="text" name="name" id="name" />
+        <input type="text" name="name" id="name" value="<%=locals.user?.name||''%>"/>
       </label>
 
       <label for="email">
         Email:
-        <input type="email" name="email" id="email" />
+        <input type="email" name="email" id="email" value="<%=locals.user?.email||''%>"/>
       </label>
 
       <label for="password">
