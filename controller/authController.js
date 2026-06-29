@@ -3,11 +3,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../model/userModel");
 
 const validations = [
-  body("name")
-    .trim()
-    .notEmpty()
-    .isAlpha()
-    .withMessage("Name must only contain alphabet letters"),
+  body("name").trim().notEmpty().withMessage("Name can not be empty."),
   body("email")
     .notEmpty()
     .trim()
@@ -27,7 +23,7 @@ const validations = [
 ];
 
 function getSignUp(req, res) {
-  res.render("/signup");
+  res.render("signup");
 }
 
 const postSignUp = [
@@ -35,20 +31,38 @@ const postSignUp = [
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).render("signup", { errors });
+      return res.status(400).render("signup", {
+        errors: errors.array(),
+        user: { name: req.body.name, email: req.body.email },
+      });
     }
 
     const { name, email, password, confirmpass } = matchedData(req);
     const hashedPassword = await bcrypt.hash(password, 12);
 
     console.log(name + email + password);
-    /*const user = userModel.createUser({
+    const user = userModel.createUser({
       name,
       email,
       password: hashedPassword,
     });
-    console.log(user);*/
+    console.log(user);
+    res.render("login");
   },
 ];
 
-module.exports = { getSignUp, postSignUp };
+function getLogin(req, res) {
+  console.log(req.session);
+  let errorMessage = req.session.messages || [];
+  req.session.messages = [];
+  res.render("login", { errorMessage });
+}
+
+function logOut(req, res, next) {
+  req.logout(function (err) {
+    if (err) return next(err);
+    res.redirect("/auth/signup");
+  });
+}
+
+module.exports = { getSignUp, postSignUp, getLogin, logOut };

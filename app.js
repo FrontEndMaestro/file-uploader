@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("./config/passport.js");
 
 const express = require("express");
 const app = express();
@@ -8,9 +9,10 @@ const passport = require("passport");
 const localStratgy = require("passport-local").Strategy;
 const path = require("node:path");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const prisma = require("./lib/prisma");
+const { prisma } = require("./lib/prisma.js");
 
 const authRouter = require("./route/authRouter");
+const indexRouter = require("./route/indexRouter");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -34,7 +36,8 @@ app.use(
 app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/signup", authRouter);
+app.use("/", indexRouter);
+app.use("/auth", authRouter);
 
 app.use((err, req, res, next) => {
   console.warn(err);
