@@ -11,3 +11,17 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.Text // MediumText may be needed for MySql
+  expiresAt   DateTime
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  name String
+  password String
+  email String @unique
+}
