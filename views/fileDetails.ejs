@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Details</title>
+  </head>
+  <body>
+    <div>
+      <h2><%= locals.file.name %></h2>
+      <div>Size: <%=locals.file.size%></div>
+      <div>Date Added: <%=locals.file.timeAdded%></div>
+      <a href="<%= locals.file.url %>">Download</a>
+      <button class="delete file-del" id="<%= locals.file.id %>">Delete</button>
+    </div>
+  </body>
+
+  <script>
+    document
+      .querySelector(".file-del")
+      .addEventListener("click", async (event) => {
+        const id = event.target.id;
+
+        try {
+          const response = await fetch(`/file/deleteFile/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error(`Could not complete deletion: ${response.status}`);
+          }
+          window.location.href = "/";
+        } catch (error) {
+          console.error(error);
+        }
+      });
+  </script>
+</html>
