@@ -3,19 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+    <title>Home</title>
   </head>
   <body>
 
-    <% if (locals.user) { %>
-    
-        <div class="user-welcome">
-           <h1>Welcome <%= user.name %></h1> 
-        </div>
-    <% } %>
-    
+    <dialog id="my-dialog">
+      <button id="dialog-close" commandfor="my-dialog" command="close">Close</button>
+      <form action="/file/createFolder" method="post">
+        <label for="folderName">
+          Folder Name:
+          <input type="text" name="folderName" id="folderName" />
+        </label>
+        <button type="submit">Create Folder</button>
+      </form>
+    </dialog>
 
+    <% if (locals.user) { %>
+      <div class="user-welcome">
+        <h1>Welcome <%= user.name %></h1> 
+      </div>
+    <% } %>
+
+    <button command="show-modal" commandfor="my-dialog">Add folder</button>
+
+    <% if (locals.filesWithoutFolder && filesWithoutFolder.length > 0) { %>
+      <div class="unassigned-files">
+        <h2>Files</h2>
+        
+        <% filesWithoutFolder.forEach(file => { %>
+          <div>
+            <a href="/file/details/<%= file.id %>">
+              <h3><%= file.name %></h3>
+            </a>
+          </div>
+        <% }) %>
+        
+      </div>
+    <% } %>
+
+    <% if (locals.folders) { %>
+      <% folders.forEach((element) => { %>
+        <div>
+          <h1><%= element.name %></h1>
+          <a href="/file/updateFolder/<%= element.id %>">Edit</a>
+          <button class="delete folder-del" id="<%= element.id %>">Delete</button>
+          
+          <% element.files.forEach(file => { %>
+            <div>
+              <a href="/file/details/<%= file.id %>">
+                <h3><%= file.name %></h3>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+      <% }) %>
+    <% } %>
+        
+    <br />
+    <a href="/file/upload">Upload file</a>
     <a href="/auth/logout">Log out</a>
 
   </body>
+
+  <script>
+    const folderDeleteButtons = document.querySelectorAll(".folder-del");
+    
+    folderDeleteButtons.forEach(button => {
+      button.addEventListener("click", async (event) => {
+        const id = event.target.id;
+        
+        try {
+          const response = await fetch(`/file/deleteFolder/${id}`, {
+            method: 'DELETE'
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Could not complete deletion: ${response.status}`);
+          }
+          console.log("heyaa")
+          
+          window.location.reload();
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    });
+  </script>
 </html>

@@ -13,6 +13,7 @@ const { prisma } = require("./lib/prisma.js");
 
 const authRouter = require("./route/authRouter");
 const indexRouter = require("./route/indexRouter");
+const fileRouter = require("./route/fileRouter.js");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -35,9 +36,11 @@ app.use(
 
 app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
+app.use("/files", express.static("uploads"));
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/file", fileRouter);
 
 app.use((err, req, res, next) => {
   console.warn(err);

@@ -40,19 +40,16 @@ const postSignUp = [
     const { name, email, password, confirmpass } = matchedData(req);
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    console.log(name + email + password);
     const user = userModel.createUser({
       name,
       email,
       password: hashedPassword,
     });
-    console.log(user);
     res.render("login");
   },
 ];
 
 function getLogin(req, res) {
-  console.log(req.session);
   let errorMessage = req.session.messages || [];
   req.session.messages = [];
   res.render("login", { errorMessage });

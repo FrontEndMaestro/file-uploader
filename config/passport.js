@@ -17,9 +17,9 @@ passport.use(
   ) {
     try {
       const user = await userModel.findUser({ email: username });
-      console.log(user);
+    
       const passwordMatch = await bcrypt.compare(password, user.password);
-      console.log("do passwords match", passwordMatch);
+      
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       }
